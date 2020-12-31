@@ -80,12 +80,12 @@ int main(void)
 	clock_t s, e;
 	int i;
 	volatile unsigned long long tmp;
-	for (i = 0; i < NUM; i++) r[i] = rand();
+	for (i = 0; i < NUM; i++) r[i] = (((unsigned long long)rand() & 0xFFFF) << 48) | (((unsigned long long)rand() & 0xFFFF) << 32) | (((unsigned long long)rand() & 0xFFFF) << 16) | ((unsigned long long)rand() & 0xFFFF);
 	popcount64e_init();
 
 	tmp = 0;
 	for (i = 0; i < NUM; i++) tmp += popcount64a(r[i]);
-	printf("bit      : %.3f\n", (double)(tmp) / NUM);
+	printf("bit      : %lld\n", tmp / NUM);
 
 	s = clock();
 	for (i = 0; i < NUM; i++) tmp = popcount64n(r[i]);
