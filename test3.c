@@ -55,7 +55,7 @@ int popcount64d(register unsigned long long x)
 	return cnt;
 }
 
-static unsigned char wordbits[65535];
+static unsigned char wordbits[65536];
 int popcount64e(register unsigned long long x)
 {
 	return wordbits[x & 0xFFFF] + wordbits[(x >> 16) & 0xFFFF] + wordbits[(x >> 32) & 0xFFFF] + wordbits[x >> 48];
@@ -65,7 +65,7 @@ void popcount64e_init(void)
 {
 	register unsigned long i, x;
 	register unsigned char cnt;
-	for (i = 0; i < 0xFFFF; i++)
+	for (i = 0; i <= 0xFFFF; i++)
 	{
 		x = i;
 		for (cnt = 0; x; cnt++) x &= x - 1;
@@ -79,7 +79,7 @@ int main(void)
 {
 	clock_t s, e;
 	int i;
-	unsigned long long tmp;
+	volatile unsigned long long tmp;
 	for (i = 0; i < NUM; i++) r[i] = ((unsigned long long)(rand() % 2) << (rand() % 64));
 	popcount64e_init();
 
@@ -88,37 +88,37 @@ int main(void)
 	printf("bit      : %.3f\n", (double)(tmp) / NUM);
 
 	s = clock();
-	for (i = 0; i < NUM; i++) popcount64n(r[i]);
+	for (i = 0; i < NUM; i++) tmp = popcount64n(r[i]);
 	e = clock();
 	printf("n        : %.3f\n", (double)(e - s) / CLOCKS_PER_SEC);
 
 	s = clock();
-	for (i = 0; i < NUM; i++) popcount64a(r[i]);
+	for (i = 0; i < NUM; i++) tmp = popcount64a(r[i]);
 	e = clock();
 	printf("a        : %.3f\n", (double)(e - s) / CLOCKS_PER_SEC);
 
 	s = clock();
-	for (i = 0; i < NUM; i++) popcount64b(r[i]);
+	for (i = 0; i < NUM; i++) tmp = popcount64b(r[i]);
 	e = clock();
 	printf("b        : %.3f\n", (double)(e - s) / CLOCKS_PER_SEC);
 
 	s = clock();
-	for (i = 0; i < NUM; i++) popcount64c(r[i]);
+	for (i = 0; i < NUM; i++) tmp = popcount64c(r[i]);
 	e = clock();
 	printf("c        : %.3f\n", (double)(e - s) / CLOCKS_PER_SEC);
 
 	s = clock();
-	for (i = 0; i < NUM; i++) popcount64d(r[i]);
+	for (i = 0; i < NUM; i++) tmp = popcount64d(r[i]);
 	e = clock();
 	printf("d        : %.3f\n", (double)(e - s) / CLOCKS_PER_SEC);
 
 	s = clock();
-	for (i = 0; i < NUM; i++) popcount64e(r[i]);
+	for (i = 0; i < NUM; i++) tmp = popcount64e(r[i]);
 	e = clock();
 	printf("e        : %.3f\n", (double)(e - s) / CLOCKS_PER_SEC);
 
 	s = clock();
-	for (i = 0; i < NUM; i++) _popcnt64(r[i]);
+	for (i = 0; i < NUM; i++) tmp = _popcnt64(r[i]);
 	e = clock();
 	printf("_popcnt64: %.3f\n", (double)(e - s) / CLOCKS_PER_SEC);
 
