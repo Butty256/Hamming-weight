@@ -80,7 +80,7 @@ int main(void)
 	clock_t s, e;
 	int i;
 	unsigned long long tmp;
-	for (i = 0; i < NUM; i++) r[i] = rand();
+	for (i = 0; i < NUM; i++) r[i] = ((unsigned long long)(rand() % 2) << (rand() % 64));
 	popcount64e_init();
 
 	tmp = 0;

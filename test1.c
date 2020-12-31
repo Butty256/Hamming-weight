@@ -11,6 +11,13 @@
 #define H01 0x0101010101010101ULL
 #define NUM 100000000
 
+int popcount64n(unsigned long long x)
+{
+	int cnt = 0;
+	for (; x; x = x >> 1) cnt += x & 1;
+	return cnt;
+}
+
 int popcount64a(unsigned long long x)
 {
 	x = (x & M1 ) + ((x >>  1) & M1 );
@@ -43,9 +50,9 @@ int popcount64c(unsigned long long x)
 
 int popcount64d(unsigned long long x)
 {
-	int count;
-	for (count=0; x; count++) x &= x - 1;
-	return count;
+	int cnt;
+	for (cnt = 0; x; cnt++) x &= x - 1;
+	return cnt;
 }
 
 static unsigned char wordbits[65535];
@@ -75,6 +82,15 @@ int main(void)
 	unsigned long long tmp;
 	for (i = 0; i < NUM; i++) r[i] = rand();
 	popcount64e_init();
+
+	tmp = 0;
+	for (i = 0; i < NUM; i++) tmp += popcount64a(r[i]);
+	printf("bit      : %.3f\n", (double)(tmp) / NUM);
+
+	s = clock();
+	for (i = 0; i < NUM; i++) popcount64n(r[i]);
+	e = clock();
+	printf("n        : %.3f\n", (double)(e - s) / CLOCKS_PER_SEC);
 
 	s = clock();
 	for (i = 0; i < NUM; i++) popcount64a(r[i]);
